@@ -1,0 +1,92 @@
+{
+    "rabbit_version": "3.8.14",
+    "rabbitmq_version": "3.8.14",
+    "product_name": "RabbitMQ",
+    "product_version": "3.8.14",
+    "users": [
+        {
+            "name": "guest",
+            "password_hash": "yqkZXdyIMZPRJgzBFez+v13ZQVIsWupRfB09vANt2ndHHixC",
+            "hashing_algorithm": "rabbit_password_hashing_sha256",
+            "tags": "administrator",
+            "limits": {}
+        },
+        {
+            "name": "admin",
+            "password_hash": "/RyqoJhefPsC/IqIN8Jc0wARCD15u9fic+iEktOIGwbwH+jj",
+            "hashing_algorithm": "rabbit_password_hashing_sha256",
+            "tags": "administrator",
+            "limits": {}
+        },
+        {
+            "name": "user-service-1",
+            "password_hash": "/RyqoJhefPsC/IqIN8Jc0wARCD15u9fic+iEktOIGwbwH+jj",
+            "hashing_algorithm": "rabbit_password_hashing_sha256",
+            "tags": "administrator",
+            "limits": {}
+        },
+        {
+            "name": "user-service-2",
+            "password_hash": "/RyqoJhefPsC/IqIN8Jc0wARCD15u9fic+iEktOIGwbwH+jj",
+            "hashing_algorithm": "rabbit_password_hashing_sha256",
+            "tags": "administrator",
+            "limits": {}
+        },
+        {
+            "name": "user-service-3",
+            "password_hash": "/RyqoJhefPsC/IqIN8Jc0wARCD15u9fic+iEktOIGwbwH+jj",
+            "hashing_algorithm": "rabbit_password_hashing_sha256",
+            "tags": "administrator",
+            "limits": {}
+        }
+    ],
+    "vhosts": [
+        {
+            "name": "/"
+        }
+    ],
+    "permissions": [
+        {
+            "user": "guest",
+            "vhost": "/",
+            "configure": ".*",
+            "write": ".*",
+            "read": ".*"
+        },
+        {
+            "user": "admin",
+            "vhost": "/",
+            "configure": ".*",
+            "write": ".*",
+            "read": ".*"
+        },
+        {
+            "user": "user-service-1",
+            "vhost": "/",
+            "configure": ".*",
+            "write": ".*",
+            "read": ".*"
+        },
+        {
+            "user": "user-service-2",
+            "vhost": "/",
+            "configure": ".*",
+            "write": ".*",
+            "read": ".*"
+        },
+        {
+            "user": "user-service-3",
+            "vhost": "/",
+            "configure": ".*",
+            "write": ".*",
+            "read": ".*"
+        }
+    ],
+    "topic_permissions": [],
+    "parameters": [],
+    "global_parameters": [],
+    "policies": [],
+    "queues": [],
+    "exchanges": [],
+    "bindings": []
+}

@@ -1,0 +1,47 @@
+version: "3.5"
+services:
+  service1:
+    container_name: service1-con
+    image: rabbit-service1-img
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+      target: service1
+    ports:
+      - 5000:5000
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://*:5000
+  service2:
+    container_name: service2-con
+    image: rabbit-service2-img
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+      target: service2
+    ports:
+      - 5001:5001
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://*:5001
+  service3:
+    container_name: service3-con
+    image: rabbit-service3-img
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+      target: service3
+    ports:
+      - 5002:5002
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://*:5002
+  # rabbitmq:
+  #   image: rabbit-image
+  #   container_name: "rabbitmq"
+  #   build:
+  #     context: ./
+  #     dockerfile: ./rabbit.Dockerfile
+  #   ports:
+  #     - 5672:5672
+  #     - 15672:15672
