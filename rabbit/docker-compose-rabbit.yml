@@ -1,0 +1,11 @@
+version: "3.5"
+services:
+  rabbitmq:
+    image: rabbit-image
+    container_name: "rabbitmq"
+    build:
+      context: ./
+      dockerfile: ./rabbit.Dockerfile
+    ports:
+      - 5672:5672
+      - 15672:15672

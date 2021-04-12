@@ -10,7 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Service1.Services;
 using Microsoft.OpenApi.Models;
-using MassTransit.ExtensionsDependencyInjectionIntegration.Registration;
+using Blueprints.Rabbit;
 
 namespace Service1
 {
@@ -40,30 +40,11 @@ namespace Service1
                 c.IncludeXmlComments(xmlPath);
             });
             services.AddControllers();
-
-            var rabbitConfig = new Blueprints.RabbitMqConfig();
-            var section = Configuration.GetSection("RabbitMq");
-            section.Bind(rabbitConfig);
-
-            services.AddMassTransit(x =>
-            {
-                x.UsingRabbitMq((context, config) =>
-                {
-                    config.Host(rabbitConfig.Host, rabbitConfig.VirtualHost, h =>
-                    {
-                        h.Username(rabbitConfig.UserName);
-                        h.Password(rabbitConfig.Password);
-                    });
-
-                    config.MessageTopology.SetEntityNameFormatter(new Blueprints.ExchangeNameFormatter());
-                    config.UsePublishFilter(typeof(Blueprints.MyPublishFilter<>), context);
-                });
-            });
-
-            services.AddMassTransitHostedService();
+            services.ConfigureMassTransit(Configuration);
+            services.ConfigurateSerilog(Configuration);
             services.AddSingleton<IServiceIdentificator, Service1Identificator>();
 
-
+            services.AddHostedService<BusService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

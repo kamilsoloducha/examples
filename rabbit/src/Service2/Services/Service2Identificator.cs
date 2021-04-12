@@ -1,4 +1,4 @@
-using Blueprints;
+using Blueprints.Rabbit;
 
 namespace Servic2.Services
 {

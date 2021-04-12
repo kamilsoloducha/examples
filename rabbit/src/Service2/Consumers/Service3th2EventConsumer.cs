@@ -19,9 +19,7 @@ namespace Service2.Consumers
 
         public async Task Consume(ConsumeContext<Service3th2Event> context)
         {
-            logger.LogInformation("EventConsumer's received event {TraceId}", Activity.Current.TraceId.ToHexString());
-            logger.LogInformation("EventConsumer's received event", context.Message.Value);
-
+            logger.LogInformation("Service3th2Event received: {message}", context.Message.Value);
             await publishEndpoint.Publish(new Service3From2Event { Value = context.Message.Value });
         }
     }

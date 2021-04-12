@@ -16,7 +16,7 @@ namespace Service3.Consumers
 
         public Task Consume(ConsumeContext<Service3From2Event> context)
         {
-            logger.LogInformation("CommonEvent3 received: {message}", context.Message.Value);
+            logger.LogInformation("Service3From2Event received: {message}", context.Message.Value);
             return Task.CompletedTask;
         }
     }

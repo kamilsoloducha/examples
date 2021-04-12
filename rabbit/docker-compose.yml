@@ -10,8 +10,11 @@ services:
     ports:
       - 5000:5000
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ENVIRONMENT=Rabbit
       - ASPNETCORE_URLS=http://*:5000
+    depends_on:
+      - rabbitmq
+      - seq
   service2:
     container_name: service2-con
     image: rabbit-service2-img
@@ -22,8 +25,11 @@ services:
     ports:
       - 5001:5001
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ENVIRONMENT=Rabbit
       - ASPNETCORE_URLS=http://*:5001
+    depends_on:
+      - rabbitmq
+      - seq
   service3:
     container_name: service3-con
     image: rabbit-service3-img
@@ -34,14 +40,24 @@ services:
     ports:
       - 5002:5002
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ENVIRONMENT=Rabbit
       - ASPNETCORE_URLS=http://*:5002
-  # rabbitmq:
-  #   image: rabbit-image
-  #   container_name: "rabbitmq"
-  #   build:
-  #     context: ./
-  #     dockerfile: ./rabbit.Dockerfile
-  #   ports:
-  #     - 5672:5672
-  #     - 15672:15672
+    depends_on:
+      - rabbitmq
+      - seq
+  rabbitmq:
+    image: rabbit-image
+    container_name: "rabbitmq"
+    build:
+      context: ./
+      dockerfile: ./rabbit.Dockerfile
+    ports:
+      - 5672:5672
+      - 15672:15672
+  seq:
+    image: datalust/seq:latest
+    container_name: seq-con
+    ports:
+      - 5341:80
+    environment:
+      - ACCEPT_EULA=Y
