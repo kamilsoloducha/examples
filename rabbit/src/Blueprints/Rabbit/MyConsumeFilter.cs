@@ -2,7 +2,6 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using GreenPipes;
 using MassTransit;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Serilog.Context;
 
@@ -36,11 +35,14 @@ namespace Blueprints.Rabbit
                 await next.Send(context);
             }
             var traceId = tractIdObj as string;
+
+            // add TraceId property to logs
             using (LogContext.PushProperty("TraceId", traceId))
             {
                 var currentActivity = Activity.Current;
                 try
                 {
+                    // create new activity - in publishFilter I user AcitvityCurrent to get TraceId to track events
                     if (currentActivity == null)
                     {
                         currentActivity = new Activity("new-actitiy")

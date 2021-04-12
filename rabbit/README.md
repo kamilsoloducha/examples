@@ -1,7 +1,7 @@
 Communication between 3 services by rabbitMq queue. Service1 contains 3 endpoints to send 3 type of events: 
  - Service2Event is a single event sending to Service2 only,
- - Service2And3 is a event sending to Service2 and Service3,
- - Service3th2 is a event sending to Service3 through Service2 (Service2 changes Service3th2 into Service3from2 in Service3th2EventConsumer)
+ - Service2And3Event is an event sending to Service2 and Service3,
+ - Service3th2Event is an event sending to Service3 through Service2 (Service2 changes Service3th2 into Service3from2 in Service3th2EventConsumer)
 
 In testing purpose use swagger to send a request to Service1.
 

@@ -10,6 +10,7 @@ namespace Blueprints.Rabbit
             this IServiceCollection services,
              IConfiguration configuration)
         {
+            // get configuration from appSettings file
             var rabbitConfig = new RabbitMqConfig();
             var section = configuration.GetSection("RabbitMq");
             section.Bind(rabbitConfig);
@@ -18,6 +19,7 @@ namespace Blueprints.Rabbit
             {
                 x.UsingRabbitMq((context, config) =>
                 {
+                    // configure connection to rabbit host
                     config.Host(rabbitConfig.Host, rabbitConfig.VirtualHost, h =>
                     {
                         h.Username(rabbitConfig.UserName);
@@ -25,7 +27,11 @@ namespace Blueprints.Rabbit
                     });
 
                     config.ConfigureEndpoints(context);
+
+                    // change exchange name formatter
                     config.MessageTopology.SetEntityNameFormatter(new ExchangeNameFormatter());
+
+                    // add consumer and publish filter
                     config.UseConsumeFilter(typeof(MyConsumeFilter<>), context);
                     config.UsePublishFilter(typeof(MyPublishFilter<>), context);
                 });

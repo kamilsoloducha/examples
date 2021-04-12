@@ -8,7 +8,6 @@ namespace Service3.Configuration
 {
     public static class MassTransitExtensions
     {
-
         public static IServiceCollection AddConsumers(this IServiceCollection services)
         {
             var config = new ServiceCollectionBusConfigurator(services);

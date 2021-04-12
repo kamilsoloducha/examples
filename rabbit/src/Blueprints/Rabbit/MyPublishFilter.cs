@@ -27,6 +27,8 @@ namespace Blueprints.Rabbit
         {
             logger.LogInformation($"{identificator.Id} - {typeof(MyPublishFilter<>).FullName} - {typeof(T)} - Send - Start");
 
+            // get TraceId from Activity.Currect - it was setup In ConsumeFilter in case consume an event,
+            // or it origins from httpRequest in case common a http request
             context.Headers.Set("TraceId", Activity.Current.TraceId.ToHexString());
             await next.Send(context);
 
