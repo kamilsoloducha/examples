@@ -1,7 +1,9 @@
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Blueprints.Events;
 using MassTransit;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -12,11 +14,15 @@ namespace Service1.Controllers
     {
         private readonly IPublishEndpoint publishEndpoint;
         private readonly ILogger<TestController> logger;
+        private readonly IHttpContextAccessor httpContextAccessor;
 
-        public TestController(IPublishEndpoint publishEndpoint, ILogger<TestController> logger)
+        public TestController(IPublishEndpoint publishEndpoint,
+         ILogger<TestController> logger,
+         IHttpContextAccessor httpContextAccessor)
         {
             this.publishEndpoint = publishEndpoint;
             this.logger = logger;
+            this.httpContextAccessor = httpContextAccessor;
         }
 
         /// <summary>
@@ -25,6 +31,7 @@ namespace Service1.Controllers
         [HttpGet("service2/{value}")]
         public async Task<ActionResult> SendToService2([FromRoute] string value, CancellationToken cancellationToken)
         {
+            var currentActivity = Activity.Current;
             await publishEndpoint.Publish(new Service2Event { Value = value }, cancellationToken);
             return Ok();
         }

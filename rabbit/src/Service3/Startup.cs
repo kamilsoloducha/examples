@@ -1,17 +1,13 @@
 using System.Diagnostics;
 using Blueprints;
-using Blueprints.Events;
 using Blueprints.Rabbit;
-using MassTransit;
-using MassTransit.ExtensionsDependencyInjectionIntegration.Registration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Servic3.Services;
-using Service3.Consumers;
-using Service3.Consumers.Definitions;
+using Service3.Configuration;
 
 namespace Service3
 {
@@ -31,11 +27,8 @@ namespace Service3
             services.ConfigureMassTransit(Configuration);
             services.ConfigurateSerilog(Configuration);
             services.AddSingleton<IServiceIdentificator, Service3Identificator>();
-
-
-
+            services.AddConsumers();
             services.AddHostedService<BusService>();
-
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

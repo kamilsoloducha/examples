@@ -1,9 +1,5 @@
-using System;
 using System.Diagnostics;
-using System.IO;
-using System.Reflection;
 using Blueprints;
-using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -35,9 +31,9 @@ namespace Service1
                     Description = "Api to testing rabbitmq and masstransit"
                 });
 
-                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                c.IncludeXmlComments(xmlPath);
+                // var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                // var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                // c.IncludeXmlComments(xmlPath);
             });
             services.AddControllers();
             services.ConfigureMassTransit(Configuration);
@@ -66,9 +62,6 @@ namespace Service1
             {
                 endpoints.MapControllers();
             });
-
-
-
         }
     }
 }
