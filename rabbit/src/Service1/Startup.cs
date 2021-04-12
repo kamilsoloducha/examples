@@ -7,6 +7,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Service1.Services;
 using Microsoft.OpenApi.Models;
 using Blueprints.Rabbit;
+using System.Reflection;
+using System.IO;
+using System;
 
 namespace Service1
 {
@@ -31,9 +34,9 @@ namespace Service1
                     Description = "Api to testing rabbitmq and masstransit"
                 });
 
-                // var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                // var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                // c.IncludeXmlComments(xmlPath);
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
             });
             services.AddControllers();
             services.ConfigureMassTransit(Configuration);

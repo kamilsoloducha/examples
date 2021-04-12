@@ -13,6 +13,7 @@ namespace Blueprints
             services.AddHttpContextAccessor();
             Log.Logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(configuration)
+                .Enrich.WithTraceIdentifier()
                 .CreateLogger();
 
             services.AddSingleton(s => new SerilogLoggerFactory(Log.Logger, true) as ILoggerFactory);
