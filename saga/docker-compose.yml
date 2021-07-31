@@ -1,0 +1,57 @@
+version: "3.5"
+services:
+
+  order:
+    container_name: order-con
+    image: order-img
+    build:
+      context: ./
+      dockerfile: ./src/OrderService/Dockerfile
+      target: orderService
+    ports:
+      - 5000:5000
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Rabbit
+      - ASPNETCORE_URLS=http://*:5000
+    depends_on:
+      - rabbitmq
+
+  shipping:
+    container_name: shipping-con
+    image: shipping-img
+    build:
+      context: ./
+      dockerfile: ./src/ShippingService/Dockerfile
+      target: shippingService
+    ports:
+      - 5001:5001
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Rabbit
+      - ASPNETCORE_URLS=http://*:5001 
+    depends_on:
+      - rabbitmq
+
+  stock:
+    container_name: stock-con
+    image: stock-img
+    build:
+      context: ./
+      dockerfile: ./src/StockService/Dockerfile
+      target: stockService
+    ports:
+      - 5002:5002
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Rabbit
+      - ASPNETCORE_URLS=http://*:5002
+    depends_on:
+      - rabbitmq
+
+  rabbitmq:
+    image: rabbit-image
+    container_name: "rabbitmq-con"
+    build:
+      context: ./
+      dockerfile: ./Dockerfile.Rabbit
+    ports:
+      - 5672:5672
+      - 15672:15672
