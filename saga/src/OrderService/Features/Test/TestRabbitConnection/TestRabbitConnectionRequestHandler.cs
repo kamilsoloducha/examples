@@ -4,7 +4,7 @@ using Events;
 using MassTransit;
 using MediatR;
 
-namespace Feature.Test.TestRabbitConnection
+namespace OrderService.Features.Test.TestRabbitConnection
 {
     public class TestRabbitConnectionRequestHandler : IRequestHandler<TestRabbitConnectionRequest>
     {
@@ -17,7 +17,7 @@ namespace Feature.Test.TestRabbitConnection
 
         public async Task<Unit> Handle(TestRabbitConnectionRequest request, CancellationToken cancellationToken)
         {
-            await publisher.Publish(new Events.TestRabbit { Message = request.Message }, cancellationToken);
+            await publisher.Publish(new TestRabbit { Message = request.Message }, cancellationToken);
             return Unit.Value;
         }
     }

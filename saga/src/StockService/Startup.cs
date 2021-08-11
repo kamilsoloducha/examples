@@ -6,6 +6,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Blueprints.Rabbit;
 using StockService.Configuration;
+using Blueprints.Database;
+using StockService.Database;
 
 namespace StockService
 {
@@ -22,6 +24,8 @@ namespace StockService
             services.ConfigureMassTransit(Configuration);
             services.AddConsumers();
             services.AddControllers();
+            services.AddScoped<IConnectionStringProvider, ConnectionStringProvider>();
+            services.AddDbContext<StockDbContext>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "StockService", Version = "v1" });

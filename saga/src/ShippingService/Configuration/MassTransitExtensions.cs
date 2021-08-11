@@ -1,8 +1,8 @@
 using MassTransit.ExtensionsDependencyInjectionIntegration.Registration;
 using Microsoft.Extensions.DependencyInjection;
-using StockService.Consumers.TestRabbit;
+using ShippingService.Consumers.TestRabbit;
 
-namespace StockService.Configuration
+namespace ShippingService.Configuration
 {
     public static class MassTransitExtensions
     {
@@ -11,7 +11,7 @@ namespace StockService.Configuration
             var config = new ServiceCollectionBusConfigurator(services);
             config.AddConsumer<TestRabbitConsumer>(typeof(TestRabbitDefinition)).Endpoint(e =>
             {
-                e.Name = $"stock-{nameof(Events.TestRabbit)}";
+                e.Name = $"shipping-{nameof(Events.TestRabbit)}";
             });
             return services;
         }

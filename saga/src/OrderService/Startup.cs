@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Blueprints.Database;
 using Blueprints.Rabbit;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
@@ -13,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using OrderService.Database;
 
 namespace OrderService
 {
@@ -31,14 +33,17 @@ namespace OrderService
             services.AddControllers();
             services.AddMediatR(typeof(Startup));
             services.ConfigureMassTransit(Configuration);
+            services.AddDatabase(Configuration);
+            services.AddDbContext<OrderDbContext>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "OrderService", Version = "v1" });
             });
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, OrderDbContext dbContext)
         {
+            dbContext.Database.EnsureCreated();
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

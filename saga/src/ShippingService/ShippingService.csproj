@@ -10,6 +10,7 @@
   
   <ItemGroup>
     <ProjectReference Include="../Blueprints/Blueprints.csproj" />
+    <ProjectReference Include="../Events/Events.csproj" />
   </ItemGroup>
 
 </Project>

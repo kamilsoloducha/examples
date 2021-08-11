@@ -15,6 +15,7 @@ services:
       - ASPNETCORE_URLS=http://*:5000
     depends_on:
       - rabbitmq
+      - db
 
   shipping:
     container_name: shipping-con
@@ -30,6 +31,7 @@ services:
       - ASPNETCORE_URLS=http://*:5001 
     depends_on:
       - rabbitmq
+      - db
 
   stock:
     container_name: stock-con
@@ -45,9 +47,10 @@ services:
       - ASPNETCORE_URLS=http://*:5002
     depends_on:
       - rabbitmq
+      - db
 
   rabbitmq:
-    image: rabbit-image
+    image: rabbit-img
     container_name: "rabbitmq-con"
     build:
       context: ./
@@ -55,3 +58,23 @@ services:
     ports:
       - 5672:5672
       - 15672:15672
+
+  db:
+    image: mysql-img
+    container_name: "mysql-con"
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    build:
+      context: ./
+      dockerfile: ./Dockerfile.MySql
+    ports:
+        - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+
+  adminer:
+    image: adminer
+    container_name: "adminer-con"
+    restart: always
+    ports:
+      - 8080:8080

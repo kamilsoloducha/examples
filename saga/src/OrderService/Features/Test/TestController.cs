@@ -1,10 +1,10 @@
 using System.Threading;
 using System.Threading.Tasks;
-using Feature.Test.TestRabbitConnection;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using OrderService.Features.Test.TestRabbitConnection;
 
-namespace Feature.Test
+namespace OrderService.Features.Test
 {
 
     [ApiController]

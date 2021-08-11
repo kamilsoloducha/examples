@@ -1,6 +1,6 @@
 using MassTransit.Definition;
 
-namespace StockService.Consumers.TestRabbit
+namespace ShippingService.Consumers.TestRabbit
 {
     public class TestRabbitDefinition : ConsumerDefinition<TestRabbitConsumer> { }
 }

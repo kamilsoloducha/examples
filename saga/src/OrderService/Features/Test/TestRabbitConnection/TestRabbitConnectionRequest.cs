@@ -1,6 +1,6 @@
 using MediatR;
 
-namespace Feature.Test.TestRabbitConnection
+namespace OrderService.Features.Test.TestRabbitConnection
 {
     public class TestRabbitConnectionRequest : IRequest
     {

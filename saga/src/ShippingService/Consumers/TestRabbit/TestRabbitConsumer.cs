@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 
-namespace StockService.Consumers.TestRabbit
+namespace ShippingService.Consumers.TestRabbit
 {
     public class TestRabbitConsumer : IConsumer<Events.TestRabbit>
     {
