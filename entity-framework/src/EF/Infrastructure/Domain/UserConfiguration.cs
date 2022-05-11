@@ -11,10 +11,20 @@ namespace EF.Infrastructure.Domain
             builder.ToTable("Users", "users");
 
             builder.HasKey(x => x.Id);
+            builder.OwnsMany(
+                x => x.Groups,
+                y => y.ToTable("Groups", "users"));
 
-            builder.Property<string>("Name").HasColumnName("Name");
-            builder.Property<string>("Password").HasColumnName("Password");
-            builder.Property<bool>("IsActive").HasColumnName("IsActive");
+        }
+    }
+
+    public class GroupEntityConfiguration : IEntityTypeConfiguration<Group>
+    {
+        public void Configure(EntityTypeBuilder<Group> builder)
+        {
+            builder.ToTable("Groups", "users");
+
+            builder.HasKey(x => x.Id);
         }
     }
 }

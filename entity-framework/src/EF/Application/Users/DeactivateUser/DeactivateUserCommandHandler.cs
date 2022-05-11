@@ -1,5 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
+using EF.Domain;
 using EF.Infrastructure.Domain;
 using MediatR;
 
@@ -17,9 +18,17 @@ namespace EF.Application.Users.DeactivateUser
         public async Task<Unit> Handle(DeactivateUserCommand request, CancellationToken cancellationToken)
         {
             var user = await _userRepository.GetById(request.Id, cancellationToken);
-            user.Deactivate();
 
-            await _userRepository.Update(user, cancellationToken);
+            var user2 = new User
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Password = user.Password,
+                IsActive = true,
+            };
+            user2.Deactivate();
+
+            await _userRepository.Update(user2, cancellationToken);
             return Unit.Value;
         }
     }

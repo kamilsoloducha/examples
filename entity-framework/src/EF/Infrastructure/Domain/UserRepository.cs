@@ -22,11 +22,11 @@ namespace EF.Infrastructure.Domain
         }
 
         public async Task<User> GetById(Guid id, CancellationToken cancellationToken)
-            => await _userContext.Users.SingleOrDefaultAsync<User>(x => x.Id == id, cancellationToken);
+            => await _userContext.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
         public async Task Update(User user, CancellationToken cancellationToken)
         {
-            _userContext.Users.Update(user);
+            _userContext.Update(user);
             await _userContext.SaveChangesAsync(cancellationToken);
         }
     }

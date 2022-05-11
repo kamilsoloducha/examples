@@ -35,6 +35,7 @@ namespace EF.Infrastructure.Domain
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new UserEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new GroupEntityConfiguration());
         }
 
         private static string CreateConnectionString(DatabaseConnectionConfiguration config)

@@ -1,16 +1,17 @@
 using System;
+using System.Collections.Generic;
 
 namespace EF.Domain
 {
     public class User
     {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public string Password { get; set; }
+        public bool IsActive { get; set; }
+        public ICollection<Group> Groups { get; set; }
 
-        public Guid Id { get; private set; }
-        public string Name { get; private set; }
-        public string Password { get; private set; }
-        public bool IsActive { get; private set; }
-
-        private User() { }
+        public User() { }
 
         public static User Create(string name, string password)
         {

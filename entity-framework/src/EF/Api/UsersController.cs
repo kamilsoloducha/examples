@@ -30,10 +30,8 @@ namespace EF.Api
 
         [HttpPut("deactivate")]
         public async Task<IActionResult> Deactivate(DeactivateUserCommand command, CancellationToken cancellationToken)
-        {
-            await _mediator.Send(command, cancellationToken);
-            return Ok();
-        }
+            => Ok(await _mediator.Send(command, cancellationToken));
+
 
     }
 }
