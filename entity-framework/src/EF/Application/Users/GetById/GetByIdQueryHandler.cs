@@ -1,6 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
-using EF.Infrastructure.Domain;
+using EF.Infrastructure.Data;
 using MediatR;
 
 namespace EF.Application.Users.GetById

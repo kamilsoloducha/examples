@@ -1,7 +1,7 @@
 version: "3.5"
 services:
-  wordki-postgres:
-    container_name: wordki-postgres
+  postgres-db:
+    container_name: postgres-db
     image: postgres:alpine
     restart: always
     ports:
@@ -12,7 +12,7 @@ services:
       POSTGRES_DB: mydb
   admin:
     image: dpage/pgadmin4
-    container_name: wordki-postgres-admin
+    container_name: postgres-admin
     restart: always
     ports:
       - 8080:80
