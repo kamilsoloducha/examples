@@ -1,0 +1,10 @@
+Run 
+    docker-compose -f docker-compose.consul.yml up 
+to run consul docker instance, then ApiGateway and Service in debug mode locally
+
+Run
+    docker-compose -f docker-compose.yml up 
+to run the whole example in docker containers
+
+consul ui: http://localhost:8500
+apigateway swagger: http://localhost:5000/swagger
