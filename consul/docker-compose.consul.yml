@@ -1,0 +1,21 @@
+version: "3.5"
+services:
+  consul:
+    image: consul
+    container_name: consul
+#    ports:
+#      - "8500:8500"
+#    networks:
+#      -   consul
+    network_mode: host
+    volumes:
+      - consul:/consul/data
+
+networks:
+  consul:
+    name: consul-network
+    external: true
+    
+volumes:
+  consul:
+    driver: local

@@ -1,0 +1,73 @@
+version: "3.5"
+services:
+  api-gateway:
+    container_name:   api-gateway
+    image: api-gateway:latest
+    build:
+      context: ./
+      dockerfile: ./ApiGateway.Dockerfile
+      target: release
+    networks:
+      - consul
+    ports:
+      - "5000:5000"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - PORT=5000
+      - ASPNETCORE_URLS=http://*:5000
+      - ConsulConfiguration__Url=http://consul:8500
+  service1:
+    container_name: service1
+    image: service:latest
+    build:
+      context: ./
+      dockerfile: ./Service.Dockerfile
+      target: release
+    networks:
+      - consul
+    ports:
+      - "5001:5001"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - PORT=5001
+      - ASPNETCORE_URLS=http://*:5001
+      - ConsulConfiguration__Url=http://consul:8500
+      - ConsulConfiguration__Address=service1
+      - ConsulConfiguration__Port=5001
+  service2:
+    container_name: service2
+    image: service:latest
+    build:
+      context: ./
+      dockerfile: ./Service.Dockerfile
+      target: release
+    networks:
+      - consul
+    ports:
+      - "5002:5002"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - PORT=5002
+      - ASPNETCORE_URLS=http://*:5002
+      - ConsulConfiguration__Url=http://consul:8500
+      - ConsulConfiguration__Address=service2
+      - ConsulConfiguration__Port=5002
+  consul:
+    image: consul
+    container_name: consul
+    ports:
+      - "8500:8500"
+    networks:
+      -   consul
+    #network_mode: host
+    volumes:
+      - consul:/consul/data
+
+networks:
+  consul:
+    name: consul-network
+    external: true
+
+volumes:
+  consul:
+    driver: local
