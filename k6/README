@@ -1,0 +1,2 @@
+1. Run application: dotnet run --project ./Service
+2. Run tests: docker-compose run k6 run /scripts/loading-tests.js
