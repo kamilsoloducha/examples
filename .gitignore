@@ -176,3 +176,4 @@ dmypy.json
  
 # Cython debug symbols
 cython_debug/
+ddd-approach-1/CartService/.idea/
