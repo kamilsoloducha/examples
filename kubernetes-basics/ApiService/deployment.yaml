@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apiservice-dep
+spec:
+  selector:
+    matchLabels:
+      app: apiservice
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: apiservice
+    spec:
+      containers:
+      - name: apiservice-container
+        image: apiservice:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 80
