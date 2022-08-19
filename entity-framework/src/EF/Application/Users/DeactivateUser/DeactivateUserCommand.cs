@@ -1,10 +1,8 @@
 using System;
 using MediatR;
 
-namespace EF.Application.Users.DeactivateUser
+namespace EF.Application.Users.DeactivateUser;
+public class DeactivateUserCommand : IRequest<Unit>
 {
-    public class DeactivateUserCommand : IRequest<Unit>
-    {
-        public Guid Id { get; set; }
-    }
+    public Guid Id { get; set; }
 }

@@ -1,6 +1,6 @@
 using EF.Application;
 using EF.Infrastructure;
-using EF.Infrastructure.Domain;
+using EF.Infrastructure.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

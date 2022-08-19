@@ -1,35 +1,33 @@
 using System.Threading;
 using System.Threading.Tasks;
 using EF.Domain;
-using EF.Infrastructure.Domain;
+using EF.Infrastructure.Data;
 using MediatR;
 
-namespace EF.Application.Users.DeactivateUser
+namespace EF.Application.Users.DeactivateUser;
+public class DeactivateUserCommandHandler : IRequestHandler<DeactivateUserCommand, Unit>
 {
-    public class DeactivateUserCommandHandler : IRequestHandler<DeactivateUserCommand, Unit>
+    private readonly UserRepository _userRepository;
+
+    public DeactivateUserCommandHandler(UserRepository userRepository)
     {
-        private readonly UserRepository _userRepository;
+        _userRepository = userRepository;
+    }
 
-        public DeactivateUserCommandHandler(UserRepository userRepository)
+    public async Task<Unit> Handle(DeactivateUserCommand request, CancellationToken cancellationToken)
+    {
+        var user = await _userRepository.GetById(request.Id, cancellationToken);
+
+        var user2 = new User
         {
-            _userRepository = userRepository;
-        }
+            Id = user.Id,
+            Name = user.Name,
+            Password = user.Password,
+            IsActive = true,
+        };
+        user2.Deactivate();
 
-        public async Task<Unit> Handle(DeactivateUserCommand request, CancellationToken cancellationToken)
-        {
-            var user = await _userRepository.GetById(request.Id, cancellationToken);
-
-            var user2 = new User
-            {
-                Id = user.Id,
-                Name = user.Name,
-                Password = user.Password,
-                IsActive = true,
-            };
-            user2.Deactivate();
-
-            await _userRepository.Update(user2, cancellationToken);
-            return Unit.Value;
-        }
+        await _userRepository.Update(user2, cancellationToken);
+        return Unit.Value;
     }
 }

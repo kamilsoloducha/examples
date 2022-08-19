@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System;
 using EF.Application.Users.GetById;
 using EF.Application.Users.DeactivateUser;
+using EF.Application.Users.UpdateUser;
 
 namespace EF.Api
 {
@@ -31,6 +32,10 @@ namespace EF.Api
         [HttpPut("deactivate")]
         public async Task<IActionResult> Deactivate(DeactivateUserCommand command, CancellationToken cancellationToken)
             => Ok(await _mediator.Send(command, cancellationToken));
+
+        [HttpPut("update")]
+        public async Task<IActionResult> Update([FromBody] UpdateUserCommand command)
+            => Ok(await _mediator.Send(command));
 
 
     }
