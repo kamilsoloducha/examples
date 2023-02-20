@@ -10,7 +10,7 @@ public class Side : Entity
 
     public virtual Card Card { get; }
 
-    private Side()
+    protected Side()
     {
     }
 

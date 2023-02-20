@@ -12,8 +12,8 @@ var app = builder.Build();
 
 var scope = app.Services.CreateScope();
 var localDbContext = scope.ServiceProvider.GetRequiredService<LocalDbContext>();
-// localDbContext.Database.EnsureDeleted();
-// localDbContext.Database.EnsureCreated();
+localDbContext.Database.EnsureDeleted();
+localDbContext.Database.EnsureCreated();
 scope.Dispose();
 
 app.UseSwagger();

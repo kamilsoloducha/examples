@@ -9,12 +9,12 @@ public class Details : Entity, IAggregateRoot
     public Drawer Drawer { get; private set; }
     public Counter Counter { get; private set; }
     
-    public bool IsQuestion { get; }
-    public DateTime NextRepeat { get; private set; }
+    public bool IsQuestion { get; private set; }
+    public DateTime? NextRepeat { get; private set; }
 
     public virtual Card Card { get; }
 
-    private Details()
+    protected Details()
     {
     }
 
@@ -24,7 +24,7 @@ public class Details : Entity, IAggregateRoot
         IsQuestion = isQuestion;
         Drawer = new Drawer();
         Counter = new Counter();
-        NextRepeat = new DateTime();
+        NextRepeat = new DateTime().ToUniversalTime();
         Card = card;
     }
 
@@ -47,6 +47,17 @@ public class Details : Entity, IAggregateRoot
     {
         Counter = Counter.Increase();
         NextRepeat = now.AddDays(1);
+    }
+
+    internal void SetQuestionable(bool isQuestionable)
+    {
+        if (IsQuestion == isQuestionable)
+        {
+            return;
+        }
+
+        IsQuestion = isQuestionable;
+        NextRepeat = IsQuestion ? DateTime.Now.ToUniversalTime() : null;
     }
 
     private int GetIncrease() => Drawer.Correct > Counter.Value ? 3 : 1;

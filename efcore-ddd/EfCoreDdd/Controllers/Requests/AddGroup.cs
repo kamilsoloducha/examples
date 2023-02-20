@@ -1,3 +1,3 @@
 namespace EfCoreDdd.Controllers.Requests;
 
-public record AddGroup(long UserId, string GroupName);
+public record AddGroup(Guid UserId, string GroupName);

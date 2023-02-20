@@ -13,8 +13,8 @@ public class OwnerEntityConfiguration : IEntityTypeConfiguration<Owner>
         builder.HasKey(x => x.Id);
         builder.HasIndex(x => x.Id);
 
-        builder.HasMany(x => x.Groups).WithOne(x => x.Owner)
-            .OnDelete(DeleteBehavior.Cascade)
-            .Metadata.PrincipalToDependent?.SetPropertyAccessMode(PropertyAccessMode.Field);
+        builder.Property(x => x.UserId);
+
+        builder.HasMany(x => x.Groups).WithOne(x => x.Owner);
     }
 }

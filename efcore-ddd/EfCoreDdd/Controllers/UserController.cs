@@ -20,16 +20,16 @@ public sealed class UserController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> AddNewOwner([FromBody] AddOwner request, CancellationToken cancellationToken)
     {
-        if (await _context.Owners.AnyAsync(x => x.Id == request.UserId, cancellationToken))
+        if (await _context.Owners.AnyAsync(x => x.UserId == request.UserId, cancellationToken))
         {
             return BadRequest("Owner already exists");
         }
         
-        var newOwner = new Owner();
+        var newOwner = new Owner(request.UserId);
         
         _context.Owners.Attach(newOwner);
         await _context.SaveChangesAsync(cancellationToken);
         
-        return Ok(newOwner.Id);
+        return Ok(newOwner.UserId);
     }
 }

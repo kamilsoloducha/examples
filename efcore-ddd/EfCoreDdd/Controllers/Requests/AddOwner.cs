@@ -1,3 +1,3 @@
 namespace EfCoreDdd.Controllers.Requests;
 
-public record AddOwner(long UserId);
+public record AddOwner(Guid UserId);

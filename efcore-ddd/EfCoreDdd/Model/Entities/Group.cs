@@ -4,8 +4,9 @@ namespace EfCoreDdd.Model.Entities;
 
 public class Group : Entity, IAggregateRoot
 {
-    public string Name { get; }
-    public virtual Owner Owner { get; }
+    public GroupName Name { get; }
+    public virtual Owner Owner { get; private set; }
+    
 
     private readonly List<Card> _cards = new();
     public virtual IReadOnlyList<Card> Cards => _cards.AsReadOnly();
@@ -14,7 +15,7 @@ public class Group : Entity, IAggregateRoot
     {
     }
 
-    public Group(string name, Owner owner) : this()
+    public Group(GroupName name, Owner owner) : this()
     {
         Name = name;
         Owner = owner;
@@ -25,5 +26,12 @@ public class Group : Entity, IAggregateRoot
         var newCard = new Card(front, back, frontExample, backExample, this);
         _cards.Add(newCard);
         return newCard;
+    }
+
+    public void Remove()
+    {
+        _cards.ForEach(x => x.Remove());
+        
+        Owner = null;
     }
 }

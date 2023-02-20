@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using EfCoreDdd.Controllers.Requests;
 using EfCoreDdd.Infrastructure.DataAccess;
 using EfCoreDdd.Model.Entities;
+using EfCoreDdd.Model.ValueObjects;
 using NBomber.Contracts;
 using NBomber.CSharp;
 using NBomber.Plugins.Http.CSharp;
@@ -31,8 +32,8 @@ public class AddCardTests
         // await dbContext.Database.EnsureDeletedAsync();
         // await dbContext.Database.EnsureCreatedAsync();
 
-        Owner = new Owner();
-        Group = Owner.CreateGroup("TestGroup");
+        Owner = new Owner(Guid.NewGuid());
+        Group = Owner.CreateGroup(new GroupName("TestGroup"));
 
         await dbContext.Owners.AddAsync(Owner);
         await dbContext.SaveChangesAsync();

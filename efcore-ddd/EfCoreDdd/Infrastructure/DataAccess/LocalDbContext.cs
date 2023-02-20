@@ -7,8 +7,10 @@ public class LocalDbContext : DbContext
 {
     private readonly bool _isProduction = false;
     public const string Schema = "ddd";
+    
     public DbSet<Owner> Owners { get; private set; }
     public DbSet<Group> Groups { get; private set; }
+    public DbSet<Card> Cards { get; private set; }
 
     public LocalDbContext(IHostEnvironment hostEnvironment)
     {
@@ -22,7 +24,7 @@ public class LocalDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseLazyLoadingProxies();
+        //optionsBuilder.UseLazyLoadingProxies();
         optionsBuilder.UseNpgsql("User ID=root;Password=changeme;Host=localhost;Port=5432;Database=myDataBase;");
 
         if (!_isProduction)

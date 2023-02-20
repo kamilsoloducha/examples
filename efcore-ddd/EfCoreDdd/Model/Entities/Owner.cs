@@ -1,15 +1,23 @@
+using EfCoreDdd.Model.ValueObjects;
+
 namespace EfCoreDdd.Model.Entities;
 
 public class Owner : Entity, IAggregateRoot
 {
     private readonly List<Group> _groups = new();
+    public Guid UserId { get; }
     public virtual IReadOnlyList<Group> Groups => _groups.AsReadOnly();
-    
-    public Owner()
+
+    protected Owner()
     {
     }
 
-    public Group CreateGroup(string name)
+    public Owner(Guid userId):this()
+    {
+        UserId = userId;
+    }
+
+    public Group CreateGroup(GroupName name)
     {
         var newGroup = new Group(name, this);
         
@@ -17,4 +25,6 @@ public class Owner : Entity, IAggregateRoot
         
         return newGroup;
     }
+
+    internal void RemoveGroup(Group group) => _groups.Remove(group);
 }
