@@ -9,10 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Logging.ClearProviders();
 var logger = new LoggerConfiguration()
-    .MinimumLevel.Debug()
-    .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
-    .Enrich.FromLogContext()
-    .WriteTo.Console(LogEventLevel.Debug)
+    .ReadFrom.Configuration(builder.Configuration)
     .WriteTo.Seq("http://localhost:5341", apiKey:"rCmYra3RSMlmYmDIHZhi", restrictedToMinimumLevel: LogEventLevel.Information)
     .CreateLogger();
 builder.Host.UseSerilog(logger);
