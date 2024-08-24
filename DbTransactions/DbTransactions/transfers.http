@@ -1,0 +1,37 @@
+### Add transfer
+# @name addtransfer
+POST http://localhost:5000/addtransfer
+Content-Type: application/json
+
+{
+  "sourceAccount" : 1,
+  "destinationAccount": 2,
+  "shares" : 1.1
+}
+
+###
+
+@contractNumber = 1
+
+### Process transfer
+PUT http://localhost:5000/processtransfer
+Content-Type: application/json
+
+{
+  "contractNumber" : {{contractNumber}}
+}
+
+###
+
+
+### Process transfer
+PUT http://localhost:5000/processtransfer/transaction
+Content-Type: application/json
+
+{
+  "contractNumber" : {{contractNumber}}
+}
+
+### Get transfer
+GET http://localhost:5000/transfer/{{contractNumber}}
+Content-Type: application/json
