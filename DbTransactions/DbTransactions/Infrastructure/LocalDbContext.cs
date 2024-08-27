@@ -29,6 +29,9 @@ internal class LocalDbContext : DbContext
             case DatabaseType.Sqlserver:
                 optionsBuilder.UseSqlServer(_configuration.ConnectionString);
                 break;
+            case DatabaseType.Oracle:
+                optionsBuilder.UseOracle(_configuration.ConnectionString);
+                break;
         }
     }
 
