@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { Todo } from '../../types/todo.model';
 import { CommonModule } from '@angular/common';
-import { TodosService } from '../../serivces/todo.service';
+import { TodosService } from '../../services/todo.service';
 
 @Component({
   selector: 'app-todos-todo',

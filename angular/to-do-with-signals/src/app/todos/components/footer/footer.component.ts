@@ -1,7 +1,7 @@
 import { Component, computed, inject } from '@angular/core';
-import { TodosService } from '../../serivces/todo.service';
 import { CommonModule } from '@angular/common';
 import { FilterEnum } from '../../types/filter.enum';
+import { TodosService } from '../../services/todo.service';
 
 @Component({
   selector: 'app-todos-footer',
@@ -14,12 +14,15 @@ export class FooterComponent {
 
   filterSig = this.todosService.filterSig;
   filterEnum = FilterEnum;
+
   activeCountSig = computed(() => {
     return this.todosService.todosSig().filter((x) => !x.isCompleted).length;
   });
+
   noTodosSig = computed(() => {
     return this.todosService.todosSig().length === 0;
   });
+
   itemsLeftText = computed(
     () => `item${this.activeCountSig() !== 1 ? 's' : ''} left`
   );
