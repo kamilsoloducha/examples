@@ -1,0 +1,12 @@
+version: '3.5'
+services:
+ oracle-db: 
+  container_name: oracle-db
+  image: gvenzl/oracle-free:slim
+  ports: 
+    - "1521:1521"
+  environment: 
+   ORACLE_PASSWORD: password
+  volumes: 
+    - .\oracle-local:/container-entrypoint-initdb.d
+
