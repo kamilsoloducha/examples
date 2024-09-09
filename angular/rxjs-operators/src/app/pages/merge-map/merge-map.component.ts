@@ -30,7 +30,7 @@ export class MergeMapComponent implements AfterViewInit {
       (value: any) => this.brokenResult.set(value.target.value as any)
     );
 
-    // working - it's taking into account both values
+    // working - it's taking into account both values0
     const ob1$ = fromEvent<InputEvent>(
       this.workingInput1?.nativeElement,
       'input'

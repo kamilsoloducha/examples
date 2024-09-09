@@ -1,0 +1,11 @@
+<button (click)="switchMapLoad()">SwitchMap</button>
+<button (click)="concatMapLoad()">ConcatMap</button>
+<button (click)="mergeMapLoad()">mergeMap</button>
+<button (click)="exhaustMapLoad()">exhaustMap</button>
+
+
+@for (value of values$ | async; track value) {
+<li>{{ value }}</li>
+} @empty {
+<li>There are no items.</li>
+}

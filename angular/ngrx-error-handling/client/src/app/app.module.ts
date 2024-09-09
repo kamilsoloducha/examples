@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { NgrxErrorHandlingModule } from './modules/ngrx-error-handling/ngrx-error-handling.module';
+import { HttpOperatorsModule } from './modules/http-operators/http-operators.module';
 
 @NgModule({
   declarations: [AppComponent],
@@ -13,6 +14,7 @@ import { NgrxErrorHandlingModule } from './modules/ngrx-error-handling/ngrx-erro
     BrowserModule,
     AppRoutingModule,
     NgrxErrorHandlingModule,
+    HttpOperatorsModule,
     EffectsModule.forRoot([]),
     StoreModule.forRoot({}, {}),
   ],

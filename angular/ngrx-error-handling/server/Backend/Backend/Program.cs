@@ -16,4 +16,11 @@ app.MapGet("/exception/{value}", (int value) =>
     .WithName("Exception throwing")
     .WithOpenApi();
 
+app.MapGet("/value/{timeout}", async (int timeout) =>
+    {
+        await Task.Delay(TimeSpan.FromSeconds(timeout));
+        return Results.Ok(DateTime.Now);
+    })
+    .WithOpenApi();
+
 app.Run();
