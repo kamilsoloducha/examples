@@ -56,16 +56,6 @@ export class BasicComponent {
     this.formValue.set(formJsonfy);
   }
 
-  cleanForm(): void {
-    this.form.setValue({
-      userName: '',
-      password: '',
-      includeAddresses: false,
-      addresses: [],
-      age: 1,
-    });
-  }
-
   addAddress(): void {
     this.addresses.push(
       new FormGroup<AddressForm>({
