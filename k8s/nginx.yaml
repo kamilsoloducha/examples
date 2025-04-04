@@ -1,0 +1,72 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nginx-pv
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  capacity:
+    storage: 100Mi
+  hostPath:
+    path: /data
+    type: DirectoryOrCreate
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nginx-pvc-claim
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 50Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: nginx
+  name: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:latest
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "100m"
+            limits:
+              memory: "64Mi"
+              cpu: "100m"
+          volumeMounts:
+            - mountPath: /usr/share/nginx/html
+              name: site-data
+      volumes:
+        - name: site-data
+          persistentVolumeClaim:
+            claimName: nginx-pvc-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 80
+  selector:
+    app: nginx

@@ -1,0 +1,21 @@
+﻿services:
+  server1:
+    image: server
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '5001:5001'
+    environment:
+      - ASPNETCORE_HTTP_PORTS=5001
+      - RedisHost=host.docker.internal:6379
+  server2:
+    image: server
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '5002:5002'
+    environment:
+      - ASPNETCORE_HTTP_PORTS=5002
+      - RedisHost=host.docker.internal:6379

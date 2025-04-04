@@ -43,7 +43,7 @@ namespace Server
         private string GenerateJwtToken(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes("thisismysupersecretpassword");
+            var key = Encoding.ASCII.GetBytes("thisismysupersecretpasswordthisismysupersecretpassword");
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[]

@@ -1,23 +1,33 @@
+using Api.Redis;
 using Microsoft.AspNetCore.Mvc;
-using StackExchange.Redis;
 
 namespace Api.Controllers;
 
 [Route("[controller]")]
-public class DataController
+public class TestController
 {
-
-    public DataController()
-    {
-        
-    }
-
-    [HttpGet("test")]
-    public void Get()
-    {
-        ConnectionMultiplexer redis = ConnectionMultiplexer.Connect("localhost:6379");
-        var database = redis.GetDatabase();
-        var result = database.StringSet("key", "value");
-    }
+    private static readonly Guid TestValue = Guid.NewGuid();
     
+    [HttpGet]
+    public string Test() => TestValue.ToString();
+}
+
+[Route("[controller]")]
+public class DataController(IRedisProvider redisProvider, ILogger<DataController> logger)
+{
+    private const string Key = "key";
+    
+    [HttpGet("get")]
+    public Task<string> Get()
+    {
+        logger.LogInformation("Getting value from {Key}", Key);
+        return redisProvider.GetValue(Key);
+    }
+
+    [HttpGet("set/{value}")]
+    public Task Set([FromRoute] string value)
+    {
+        logger.LogInformation("Setting {Value} on {Key}", value, Key);
+        return redisProvider.SetValue(Key, value);
+    }
 }

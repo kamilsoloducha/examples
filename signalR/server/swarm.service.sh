@@ -1,0 +1,1 @@
+docker service create --name signalr.server --publish mode=host,target=5000,published=5000 --replicas 2 --limit-cpu 1 --reserve-memory 200MB --limit-memory 500MB signalr.server:latest

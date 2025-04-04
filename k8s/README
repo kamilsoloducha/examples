@@ -1,0 +1,16 @@
+1. To create volume, claims, pod and service
+   kubectl apply -f nginx.yaml
+
+2. To mount local path to minikube VM:
+
+minikube mount /Users/kamil/data:/data
+
+where
+
+- /Users/kamil/data is path on your machine
+
+- /data is path on minikube VM
+
+3. To expose service:
+
+minikube tunnel

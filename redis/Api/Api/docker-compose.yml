@@ -1,0 +1,13 @@
+﻿version: "3"
+
+services:
+  web:
+    build: .
+    image: api-redis:latest
+    ports:
+      - 5000:8080
+    networks:
+      - mynet
+
+networks:
+  mynet:

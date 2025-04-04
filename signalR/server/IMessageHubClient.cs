@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
-using Server.Dto;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
@@ -42,14 +41,14 @@ namespace Server
             this.httpContext = httpContext;
         }
 
-        private readonly static IList<Connection> connections = new List<Connection>();
+        private static readonly IList<Connection> connections = new List<Connection>();
         private readonly ILogger<MessageHub> logger;
         private readonly IHttpContextAccessor httpContext;
 
         public string GetConnectionId() => Context.ConnectionId;
 
         [Authorize(JwtBearerDefaults.AuthenticationScheme)]
-        public async override Task OnConnectedAsync()
+        public override async Task OnConnectedAsync()
         {
             logger.LogInformation("New Message connection: {connectionId}", Context.ConnectionId);
             await base.OnConnectedAsync();

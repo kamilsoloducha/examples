@@ -1,0 +1,20 @@
+<ng-container *ngIf="!isLogin">
+  <form>
+    <input type="text" [formControl]="loginControl">
+  </form>
+  <button (click)="login()">Login</button>
+</ng-container>
+
+<ng-container *ngIf="isLogin">
+  <div>
+    <form>
+      <input type="text" [formControl]="messageControl">
+    </form>
+    <button (click)="sendMessage()">Send</button>
+  </div>
+  <div>
+    <ng-container *ngFor="let message of messages">
+      <b>{{message.userName}}:</b> {{message.content}}<br>
+    </ng-container>
+  </div>
+</ng-container>
