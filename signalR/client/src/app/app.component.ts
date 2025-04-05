@@ -1,13 +1,17 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormControl } from '@angular/forms';
-import { Listener, SingalRService } from './signalR.service';
-import { MessageHttpService, UserHttpService } from './user-http.service';
+import { FormBuilder, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { UserService } from './user.service';
+import { MessageHttpService, UserHttpService } from './user-http.service';
+import { SingalRService } from './signalR.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-root',
+  imports: [ ReactiveFormsModule, CommonModule],
+  providers:[UserService, UserHttpService, SingalRService, MessageHttpService],
+  standalone: true,
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrl: './app.component.css'
 })
 export class AppComponent {
 

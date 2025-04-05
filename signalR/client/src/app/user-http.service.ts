@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { HttpClient, HttpEvent, HttpHandler, HttpHeaders, HttpInterceptor, HttpRequest } from '@angular/common/http';
+import { HttpClient, HttpEvent, HttpHandler, HttpHandlerFn, HttpHeaders, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { UserService } from './user.service';
 
 @Injectable()
@@ -17,7 +17,7 @@ export class UserHttpService {
 }
 
 @Injectable()
-export class MessageHttpService{
+export class MessageHttpService {
 
     constructor(private readonly httpClient: HttpClient) { }
 
@@ -35,21 +35,16 @@ export interface AuthenticateResponse {
     token: string;
 }
 
+export function loggingInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> {
 
-@Injectable()
-export class AuthInterceptor implements HttpInterceptor {
-
-    constructor(private readonly userService: UserService){}
-
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-      if (this.userService.isLogin()){
+    const userService = inject(UserService);
+    if (userService.isLogin()) {
         req = req.clone({
             setHeaders: {
-                'Content-Type' : 'application/json; charset=utf-8',
-                Authorization: `Bearer ${this.userService.getToken()}`,
+                'Content-Type': 'application/json; charset=utf-8',
+                Authorization: `Bearer ${userService.getToken()}`,
             },
-          });
-      }
-      return next.handle(req);
-  }
+        });
+    }
+    return next(req);
 }

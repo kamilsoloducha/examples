@@ -1,20 +1,68 @@
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
+using Server;
+using Server.Endpoints;
 
-namespace Server
-{
-    public class Program
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(x =>
     {
-        public static void Main(string[] args)
+        x.TokenValidationParameters = new TokenValidationParameters
         {
-            CreateHostBuilder(args).Build().Run();
-        }
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("thisismysupersecretpasswordthisismysupersecretpassword")),
+            ValidateIssuerSigningKey = true,
+            ValidateIssuer = false,
+            ValidateAudience = false
+        };
+        x.RequireHttpsMetadata = false;
+        x.IncludeErrorDetails = true;
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
+        x.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                string accessToken = context.Request.Query["access_token"];
+                var path = context.HttpContext.Request.Path;
+                if (!string.IsNullOrEmpty(accessToken) &&
+                    (path.StartsWithSegments("/notify")))
                 {
-                    webBuilder.UseStartup<Startup>();
-                });
-    }
-}
+                    if (accessToken.StartsWith("Bearer"))
+                    {
+                        accessToken = accessToken.Substring("Bearer".Length + 1);
+                    }
+
+                    context.Token = accessToken;
+                }
+
+                return Task.CompletedTask;
+            }
+        };
+    });
+
+builder.Services.AddCors(o => o.AddPolicy("CorsPolicy", builder =>
+{
+    builder
+        .WithOrigins("http://localhost:4200")
+        .AllowAnyMethod()
+        .AllowAnyHeader();
+}));
+builder.Services
+    .AddSignalR();
+builder.Services.AddTransient<IConnectionStore, MessageHub>();
+builder.Services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddTransient<IUserService, UserService>();
+
+var app = builder.Build();
+app.UseCors("CorsPolicy");
+app.MapHub<MessageHub>("/notify");
+app.AddAuthenticate()
+    .AddGetUser()
+    .AddMessageSend();
+
+await app.RunAsync();
