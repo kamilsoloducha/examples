@@ -16,9 +16,9 @@ export class SingalRService {
         this.connection = new HubConnectionBuilder()
             .configureLogging(LogLevel.Information)
             .withUrl('http://localhost:5000/notify', {
+                skipNegotiation: false,
+                transport: HttpTransportType.WebSockets,
                 accessTokenFactory: () => this.userService.getToken(),
-                skipNegotiation: true,
-                transport: HttpTransportType.WebSockets
             })
             .withAutomaticReconnect([1000, 5000, 10000, 60000])
             .build();

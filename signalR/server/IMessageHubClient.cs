@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
@@ -34,21 +33,18 @@ public interface IConnectionStore
 public class MessageHub : Hub<IMessageHubClient>, IConnectionStore
 {
 
-    public MessageHub(ILogger<MessageHub> logger,
-        IHttpContextAccessor httpContext) : base()
+    public MessageHub(ILogger<MessageHub> logger)
     {
         this.logger = logger;
-        this.httpContext = httpContext;
     }
 
-    private readonly static IList<Connection> connections = new List<Connection>();
+    private static readonly IList<Connection> connections = new List<Connection>();
     private readonly ILogger<MessageHub> logger;
-    private readonly IHttpContextAccessor httpContext;
 
     public string GetConnectionId() => Context.ConnectionId;
 
-    [Authorize(JwtBearerDefaults.AuthenticationScheme)]
-    public async override Task OnConnectedAsync()
+     [Authorize(JwtBearerDefaults.AuthenticationScheme)]
+    public override async Task OnConnectedAsync()
     {
         logger.LogInformation("New Message connection: {connectionId}", Context.ConnectionId);
         await base.OnConnectedAsync();
@@ -59,7 +55,7 @@ public class MessageHub : Hub<IMessageHubClient>, IConnectionStore
         await Clients.AllExcept(Context.ConnectionId).NewConnection(Context.ConnectionId);
     }
 
-    public async override Task OnDisconnectedAsync(Exception exception)
+    public override async Task OnDisconnectedAsync(Exception exception)
     {
         await base.OnDisconnectedAsync(exception);
         var connectionToRemove = connections.SingleOrDefault(x => x.Id.Equals(Context.ConnectionId));

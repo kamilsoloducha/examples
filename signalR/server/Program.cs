@@ -3,12 +3,15 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Server;
 using Server.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var signalRConnectionString = builder.Configuration.GetValue<string>("SignalR:ConnectionString");
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(x =>
@@ -50,10 +53,15 @@ builder.Services.AddCors(o => o.AddPolicy("CorsPolicy", builder =>
     builder
         .WithOrigins("http://localhost:4200")
         .AllowAnyMethod()
+        .AllowCredentials()
         .AllowAnyHeader();
 }));
 builder.Services
-    .AddSignalR();
+    .AddSignalR()
+    .AddAzureSignalR(options =>
+    {
+        options.ConnectionString = signalRConnectionString;
+    });
 builder.Services.AddTransient<IConnectionStore, MessageHub>();
 builder.Services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddTransient<IUserService, UserService>();
