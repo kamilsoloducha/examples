@@ -1,7 +1,6 @@
-namespace Blueprints.Events
+namespace Blueprints.Events;
+
+public class Service3th2Event
 {
-    public class Service3th2Event
-    {
-        public string Value { get; set; }
-    }
+    public string Value { get; set; }
 }

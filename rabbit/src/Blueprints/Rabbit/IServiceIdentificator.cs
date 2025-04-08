@@ -1,7 +1,6 @@
-namespace Blueprints.Rabbit
+namespace Blueprints.Rabbit;
+
+public interface IServiceIdentificator
 {
-    public interface IServiceIdentificator
-    {
-        string Id { get; }
-    }
+    string Id { get; }
 }

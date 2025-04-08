@@ -4,20 +4,19 @@ using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Extensions.Logging;
 
-namespace Blueprints
-{
-    public static class SerilogExtensions
-    {
-        public static IServiceCollection ConfigurateSerilog(this IServiceCollection services, IConfiguration configuration)
-        {
-            services.AddHttpContextAccessor();
-            Log.Logger = new LoggerConfiguration()
-                .ReadFrom.Configuration(configuration)
-                .Enrich.WithTraceIdentifier()
-                .CreateLogger();
+namespace Blueprints;
 
-            services.AddSingleton(s => new SerilogLoggerFactory(Log.Logger, true) as ILoggerFactory);
-            return services;
-        }
+public static class SerilogExtensions
+{
+    public static IServiceCollection ConfigurateSerilog(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddHttpContextAccessor();
+        Log.Logger = new LoggerConfiguration()
+            .ReadFrom.Configuration(configuration)
+            .Enrich.WithTraceIdentifier()
+            .CreateLogger();
+
+        services.AddSingleton(s => new SerilogLoggerFactory(Log.Logger, true) as ILoggerFactory);
+        return services;
     }
 }

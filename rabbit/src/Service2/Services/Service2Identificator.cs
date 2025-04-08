@@ -1,9 +1,8 @@
 using Blueprints.Rabbit;
 
-namespace Servic2.Services
+namespace Servic2.Services;
+
+public class Service2Identificator : IServiceIdentificator
 {
-    public class Service2Identificator : IServiceIdentificator
-    {
-        public string Id => "Service2";
-    }
+    public string Id => "Service2";
 }

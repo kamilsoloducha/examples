@@ -1,4 +1,3 @@
-version: "3.5"
 services:
   service1:
     container_name: service1-con
@@ -8,10 +7,10 @@ services:
       dockerfile: ./Dockerfile
       target: service1
     ports:
-      - 5000:5000
+      - 5001:5001
     environment:
       - ASPNETCORE_ENVIRONMENT=Rabbit
-      - ASPNETCORE_URLS=http://*:5000
+      - ASPNETCORE_URLS=http://*:5001
     depends_on:
       - rabbitmq
       - seq
@@ -23,10 +22,10 @@ services:
       dockerfile: ./Dockerfile
       target: service2
     ports:
-      - 5001:5001
+      - 5002:5002
     environment:
       - ASPNETCORE_ENVIRONMENT=Rabbit
-      - ASPNETCORE_URLS=http://*:5001
+      - ASPNETCORE_URLS=http://*:5002
     depends_on:
       - rabbitmq
       - seq
@@ -38,10 +37,10 @@ services:
       dockerfile: ./Dockerfile
       target: service3
     ports:
-      - 5002:5002
+      - 5003:5003
     environment:
       - ASPNETCORE_ENVIRONMENT=Rabbit
-      - ASPNETCORE_URLS=http://*:5002
+      - ASPNETCORE_URLS=http://*:5003
     depends_on:
       - rabbitmq
       - seq

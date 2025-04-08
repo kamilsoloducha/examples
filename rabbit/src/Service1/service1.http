@@ -1,0 +1,11 @@
+### service2
+GET http://localhost:5000/service2/test
+Content-Type: application/json
+
+### service2and3
+GET http://localhost:5000/service2and3/test
+Content-Type: application/json
+
+### service3th2
+GET http://localhost:5000/service3th2/test
+Content-Type: application/json

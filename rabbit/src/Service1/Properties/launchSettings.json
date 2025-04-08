@@ -1,6 +1,6 @@
 ﻿{
   "profiles": {
-    "Service2": {
+    "Service1": {
       "commandName": "Project",
       "launchBrowser": false,
       "applicationUrl": "http://localhost:5000",

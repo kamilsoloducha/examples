@@ -1,43 +1,46 @@
-﻿using MassTransit;
+﻿using System;
+using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Blueprints.Rabbit
+namespace Blueprints.Rabbit;
+
+public static class RabbitMqExtensions
 {
-    public static class RabbitMqExtensions
+    public static IServiceCollection ConfigureMassTransit(
+        this IServiceCollection services,
+        IConfiguration configuration,
+        Action<IBusRegistrationConfigurator> builderAction = null)
     {
-        public static IServiceCollection ConfigureMassTransit(
-            this IServiceCollection services,
-             IConfiguration configuration)
+        // get configuration from appSettings file
+        var rabbitConfig = new RabbitMqConfig();
+        var section = configuration.GetSection("RabbitMq");
+        section.Bind(rabbitConfig);
+
+        services.AddMassTransit(x =>
         {
-            // get configuration from appSettings file
-            var rabbitConfig = new RabbitMqConfig();
-            var section = configuration.GetSection("RabbitMq");
-            section.Bind(rabbitConfig);
+            builderAction?.Invoke(x);
 
-            services.AddMassTransit(x =>
+            x.UsingRabbitMq((context, config) =>
             {
-                x.UsingRabbitMq((context, config) =>
+                // configure connection to rabbit host
+                config.Host(rabbitConfig.Host, rabbitConfig.VirtualHost, h =>
                 {
-                    // configure connection to rabbit host
-                    config.Host(rabbitConfig.Host, rabbitConfig.VirtualHost, h =>
-                    {
-                        h.Username(rabbitConfig.UserName);
-                        h.Password(rabbitConfig.Password);
-                    });
-
-                    config.ConfigureEndpoints(context);
-
-                    // change exchange name formatter
-                    config.MessageTopology.SetEntityNameFormatter(new ExchangeNameFormatter());
-
-                    // add consumer and publish filter
-                    config.UseConsumeFilter(typeof(MyConsumeFilter<>), context);
-                    config.UsePublishFilter(typeof(MyPublishFilter<>), context);
+                    h.Username(rabbitConfig.UserName);
+                    h.Password(rabbitConfig.Password);
                 });
-            });
 
-            return services;
-        }
+                config.ConfigureEndpoints(context);
+
+                // change exchange name formatter
+                config.MessageTopology.SetEntityNameFormatter(new ExchangeNameFormatter());
+
+                // add consumer and publish filter
+                config.UseConsumeFilter(typeof(MyConsumeFilter<>), context);
+                config.UsePublishFilter(typeof(MyPublishFilter<>), context);
+            });
+        });
+
+        return services;
     }
 }

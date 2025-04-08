@@ -1,13 +1,12 @@
-using MassTransit.Topology;
+using MassTransit;
 
-namespace Blueprints.Rabbit
+namespace Blueprints.Rabbit;
+
+public class ExchangeNameFormatter : IEntityNameFormatter
 {
-    public class ExchangeNameFormatter : IEntityNameFormatter
+    public string FormatEntityName<T>()
     {
-        public string FormatEntityName<T>()
-        {
-            var name = typeof(T).Name;
-            return $"{name}_Exchange";
-        }
+        var name = typeof(T).Name;
+        return $"{name}_Exchange";
     }
 }

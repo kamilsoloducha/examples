@@ -1,12 +1,10 @@
-using MassTransit.Definition;
-using Service3.Consumers;
+using MassTransit;
 
-namespace Service3.Consumers.Definitions
+namespace Service3.Consumers.Definitions;
+
+public class Service3From2Definition : ConsumerDefinition<Service3From2EventConsumer>
 {
-    public class Service3From2Definition : ConsumerDefinition<Service3From2EventConsumer>
+    public Service3From2Definition()
     {
-        public Service3From2Definition()
-        {
-        }
     }
 }

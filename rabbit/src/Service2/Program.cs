@@ -1,20 +1,19 @@
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
+using Blueprints;
+using Blueprints.Rabbit;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Servic2.Services;
+using Service2.Configuration;
 
-namespace Service2
-{
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            CreateHostBuilder(args).Build().Run();
-        }
+var builder = WebApplication.CreateBuilder(args);
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
-    }
-}
+var configuration = builder.Configuration;
+
+builder.Services.ConfigureMassTransit(configuration, MassTransitExtensions.DefineConsumers);
+builder.Services.ConfigurateSerilog(configuration);
+builder.Services.AddSingleton<IServiceIdentificator, Service2Identificator>();
+builder.Services.AddHostedService<BusService>();
+
+var app = builder.Build();
+
+await app.RunAsync();
