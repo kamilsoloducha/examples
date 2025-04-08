@@ -4,11 +4,11 @@ using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Extensions.Logging;
 
-namespace Blueprints;
+namespace Blueprints.Serilog;
 
 public static class SerilogExtensions
 {
-    public static IServiceCollection ConfigurateSerilog(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection ConfigureSerilog(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddHttpContextAccessor();
         Log.Logger = new LoggerConfiguration()
@@ -16,7 +16,7 @@ public static class SerilogExtensions
             .Enrich.WithTraceIdentifier()
             .CreateLogger();
 
-        services.AddSingleton(s => new SerilogLoggerFactory(Log.Logger, true) as ILoggerFactory);
+        services.AddSingleton(_ => new SerilogLoggerFactory(Log.Logger, true) as ILoggerFactory);
         return services;
     }
 }

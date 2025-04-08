@@ -2,7 +2,7 @@ using System.Diagnostics;
 using Serilog.Core;
 using Serilog.Events;
 
-namespace Blueprints;
+namespace Blueprints.Serilog;
 
 public class TraceEnricher : ILogEventEnricher
 {

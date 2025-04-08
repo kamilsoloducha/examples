@@ -2,7 +2,7 @@ using System;
 using Serilog;
 using Serilog.Configuration;
 
-namespace Blueprints;
+namespace Blueprints.Serilog;
 
 public static class TraceEnricherConfigurationExtensions
 {

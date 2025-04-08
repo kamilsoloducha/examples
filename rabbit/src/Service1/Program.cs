@@ -2,6 +2,7 @@ using System.Threading;
 using Blueprints;
 using Blueprints.Events;
 using Blueprints.Rabbit;
+using Blueprints.Serilog;
 using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -14,7 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
 builder.Services.ConfigureMassTransit(configuration);
-builder.Services.ConfigurateSerilog(configuration);
+builder.Services.ConfigureSerilog(configuration);
 builder.Services.AddSingleton<IServiceIdentificator, Service1Identificator>();
 builder.Services.AddHostedService<BusService>();
 
