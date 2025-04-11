@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using MassTransit;
 using Microsoft.Extensions.Hosting;
 
-namespace Blueprints.Rabbit;
+namespace Blueprints.RabbitMassTransit;
 
 public class BusService : IHostedService
 {

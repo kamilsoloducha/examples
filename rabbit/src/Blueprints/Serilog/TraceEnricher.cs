@@ -12,7 +12,8 @@ public class TraceEnricher : ILogEventEnricher
             return;
         var traceId = propertyFactory.CreateProperty("TraceId", Activity.Current.TraceId);
         logEvent.AddOrUpdateProperty(traceId);
-        var SpanId = propertyFactory.CreateProperty("SpanId", Activity.Current.SpanId);
-        logEvent.AddOrUpdateProperty(SpanId);
+        var spanId = propertyFactory.CreateProperty("SpanId", Activity.Current.SpanId);
+        logEvent.AddOrUpdateProperty(spanId);
+        
     }
 }

@@ -1,5 +1,4 @@
-using Blueprints;
-using Blueprints.Rabbit;
+using Blueprints.RabbitMassTransit;
 using Blueprints.Serilog;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;

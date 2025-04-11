@@ -9,3 +9,7 @@ Content-Type: application/json
 ### service3th2
 GET http://localhost:5000/service3th2/test
 Content-Type: application/json
+
+### rabbit client test process1
+GET http://localhost:5000/process1
+Content-Type: application/json

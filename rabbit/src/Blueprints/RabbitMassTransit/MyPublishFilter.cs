@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 
-namespace Blueprints.Rabbit;
+namespace Blueprints.RabbitMassTransit;
 
 public class MyPublishFilter<T> : IFilter<PublishContext<T>> where T : class
 {

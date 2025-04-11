@@ -1,4 +1,4 @@
-namespace Blueprints.Rabbit;
+namespace Blueprints.RabbitMassTransit;
 
 public interface IServiceIdentificator
 {

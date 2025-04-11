@@ -1,4 +1,4 @@
-using Blueprints.Rabbit;
+using Blueprints.RabbitMassTransit;
 
 namespace Service1.Services;
 

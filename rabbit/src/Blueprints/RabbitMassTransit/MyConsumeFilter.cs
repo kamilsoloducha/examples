@@ -4,7 +4,7 @@ using MassTransit;
 using Microsoft.Extensions.Logging;
 using LogContext = Serilog.Context.LogContext;
 
-namespace Blueprints.Rabbit;
+namespace Blueprints.RabbitMassTransit;
 
 public class MyConsumeFilter<T> : IFilter<ConsumeContext<T>> where T : class
 {
