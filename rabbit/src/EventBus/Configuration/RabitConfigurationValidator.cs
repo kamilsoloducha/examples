@@ -1,10 +1,10 @@
 using Microsoft.Extensions.Options;
 
-namespace Blueprints.RabbitClient.Configuration;
+namespace EventBus.Configuration;
 
 public class RabitConfigurationValidator : IValidateOptions<RabbitConfiguration>
 {
-    public ValidateOptionsResult Validate(string name, RabbitConfiguration options)
+    public ValidateOptionsResult Validate(string? name, RabbitConfiguration options)
     {
         var validationMessage = string.Empty;
 

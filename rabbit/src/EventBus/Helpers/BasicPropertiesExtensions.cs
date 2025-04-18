@@ -1,8 +1,6 @@
-using System;
-using System.Diagnostics;
 using RabbitMQ.Client;
 
-namespace Blueprints.RabbitClient.Helpers;
+namespace EventBus.Helpers;
 
 public static class BasicPropertiesExtensions
 {

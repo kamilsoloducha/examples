@@ -3,6 +3,10 @@
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../EventBus/EventBus.csproj" />
+  </ItemGroup>
   
   <ItemGroup>
     <PackageReference Include="MassTransit" Version="8.4.0" />

@@ -1,11 +1,9 @@
-using System;
 using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
-using Blueprints.RabbitClient.Abstraction;
+using System.Diagnostics.CodeAnalysis;
+using EventBus.Abstraction;
 using Serilog;
 
-namespace Blueprints.RabbitClient.Implementation;
+namespace EventBus.Implementation;
 
 public class PerformenceLogDecorator<TEvent> : IEventHandler<TEvent>
 {
@@ -16,7 +14,7 @@ public class PerformenceLogDecorator<TEvent> : IEventHandler<TEvent>
         _decorated = decorated;
     }
     
-    public Task Handle(TEvent @event, CancellationToken cancellationToken = default)
+    public Task Handle([NotNull] TEvent @event, CancellationToken cancellationToken = default)
     {
         var stopWatch = Stopwatch.StartNew();
 
@@ -26,7 +24,7 @@ public class PerformenceLogDecorator<TEvent> : IEventHandler<TEvent>
         }
         finally
         {
-            Log.Information("Event {Event} handled in {ElapsedMilliseconds}ms", @event.GetType().Name, stopWatch.ElapsedMilliseconds);
+            Log.Information("Event {Event} handled in {ElapsedMilliseconds}ms", typeof(TEvent).Name, stopWatch.ElapsedMilliseconds);
         }
     }
 }

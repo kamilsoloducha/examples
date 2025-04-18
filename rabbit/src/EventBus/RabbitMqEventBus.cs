@@ -1,33 +1,26 @@
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Blueprints.RabbitClient.Abstraction;
-using Blueprints.RabbitClient.Configuration;
-using Blueprints.RabbitClient.ErrorHandling;
-using Blueprints.RabbitClient.Helpers;
-using MassTransit;
-using Microsoft.AspNetCore.Http;
+using EventBus.Abstraction;
+using EventBus.Configuration;
+using EventBus.ErrorHandling;
+using EventBus.Helpers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using Serilog;
-using LogContext = Serilog.Context.LogContext;
 
-namespace Blueprints.RabbitClient;
+namespace EventBus;
 
 public class RabbitMqEventBus : IEventBus
 {
     private readonly INamingFormatter _namingFormatter;
     private readonly IServiceScopeFactory _serviceScopeFactory;
     private readonly TimeProvider _timeProvider;
-    private IConnection _connection;
     private readonly ConnectionFactory _connectionFactory;
     private readonly CancellationTokenSource _applicationStoppingTokenSource;
+    private IConnection? _connection;
 
     public RabbitMqEventBus(IOptions<RabbitConfiguration> options,
         INamingFormatter namingFormatter,
@@ -75,11 +68,7 @@ public class RabbitMqEventBus : IEventBus
         var exchangeName = GetExchangeName<TEvent>();
         var queueName = GetQueueName<TEvent>();
 
-        var channel = await _connection.CreateChannelAsync(
-            new CreateChannelOptions(
-                publisherConfirmationsEnabled: true,
-                publisherConfirmationTrackingEnabled: true),
-            cancellationToken);
+        var channel = await CreateChannel(_connection, cancellationToken);
 
         await channel.ExchangeDeclareAsync(
             exchangeName,
@@ -107,19 +96,19 @@ public class RabbitMqEventBus : IEventBus
         {
             if (_applicationStoppingTokenSource.IsCancellationRequested) return;
             
-            TEvent @event;
+            TEvent? @event;
             var body = Array.Empty<byte>();
 
             try
             {
-                string traceIdValue = default;
+                var traceIdValue = string.Empty;
                 var props = eventArgs.BasicProperties;
                 if (props.Headers is not null &&
-                    props.Headers.TryGetValue(BasicPropertiesExtensions.TraceIdHeaderName, out var traceIdValueBytes))
+                    props.Headers.TryGetValue(BasicPropertiesExtensions.TraceIdHeaderName, out var traceIdValueObject))
                 {
-                    if (traceIdValueBytes is byte[])
+                    if (traceIdValueObject is byte[])
                     {
-                        traceIdValue = Encoding.UTF8.GetString(traceIdValueBytes as byte[]);
+                        traceIdValue = Encoding.UTF8.GetString((byte[])traceIdValueObject);
                     }
                 }
                 
@@ -132,6 +121,11 @@ public class RabbitMqEventBus : IEventBus
                 body = eventArgs.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body);
                 @event = JsonConvert.DeserializeObject<TEvent>(message);
+
+                if (@event is null)
+                {
+                    throw new InvalidOperationException("Deserialized event cannot be null");
+                }
             }
             catch (Exception ex)
             {
@@ -205,22 +199,17 @@ public class RabbitMqEventBus : IEventBus
         var messageBodyBytes = Encoding.UTF8.GetBytes(serializedEvent);
         var props = new BasicProperties()
         {
-            Headers = new Dictionary<string, object>()
+            Headers = new Dictionary<string, object?>()
         };
         props.AddDateTimeOffset(_timeProvider.GetLocalNow().UtcDateTime);
 
         var traceId = Activity.Current is not null
             ? Activity.Current.TraceId.ToHexString()
-            : new Activity(nameof(IPublishEndpoint.Publish)).TraceId.ToHexString();
+            : new Activity(nameof(RabbitMqEventBus)).TraceId.ToHexString();
 
         props.AddTraceId(traceId);
 
-        var channel = await _connection.CreateChannelAsync(
-            new CreateChannelOptions(
-                publisherConfirmationsEnabled: true,
-                publisherConfirmationTrackingEnabled: true),
-            cancellationToken);
-
+        var channel = await CreateChannel(_connection, cancellationToken);
         await channel.BasicPublishAsync(exchangeName, string.Empty, false, props, messageBodyBytes);
     }
 
@@ -229,4 +218,15 @@ public class RabbitMqEventBus : IEventBus
     private string GetQueueName<TEvent>() => _namingFormatter.QueueName(typeof(TEvent).Name);
     private string GetExchangeName<TEvent>() => _namingFormatter.ExchangeName(typeof(TEvent).Name);
     private string GetErrorQueueName<TEvent>() => _namingFormatter.ErrorQueueName(typeof(TEvent).Name);
+    
+    private static Task<IChannel> CreateChannel(IConnection? connection, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(connection);
+        
+        return connection.CreateChannelAsync(
+            new CreateChannelOptions(
+                publisherConfirmationsEnabled: true,
+                publisherConfirmationTrackingEnabled: true),
+            cancellationToken);
+    }
 }

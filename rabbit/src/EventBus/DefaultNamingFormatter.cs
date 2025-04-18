@@ -1,8 +1,8 @@
-using Blueprints.RabbitClient.Abstraction;
-using Blueprints.RabbitClient.Configuration;
+using EventBus.Abstraction;
+using EventBus.Configuration;
 using Microsoft.Extensions.Options;
 
-namespace Blueprints.RabbitClient;
+namespace EventBus;
 
 public class DefaultNamingFormatter : INamingFormatter
 {

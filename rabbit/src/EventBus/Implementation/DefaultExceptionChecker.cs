@@ -1,8 +1,6 @@
-using System;
-using System.Linq;
-using Blueprints.RabbitClient.ErrorHandling;
+using EventBus.ErrorHandling;
 
-namespace Blueprints.RabbitClient.Implementation;
+namespace EventBus.Implementation;
 
 public class DefaultExceptionChecker : IFatalExceptionChecker
 {

@@ -1,13 +1,11 @@
 using System;
 using System.Threading;
-using Blueprints.Events;
-using Blueprints.RabbitClient;
-using Blueprints.RabbitClient.Abstraction;
-using Blueprints.RabbitClient.ErrorHandling;
-using Blueprints.RabbitClient.Implementation;
 using Blueprints.RabbitMassTransit;
 using Blueprints.Serilog;
-using MassTransit;
+using EventBus;
+using EventBus.Abstraction;
+using EventBus.ErrorHandling;
+using EventBus.Implementation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

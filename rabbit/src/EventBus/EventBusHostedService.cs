@@ -1,11 +1,9 @@
-using System.Threading;
-using System.Threading.Tasks;
-using Blueprints.RabbitClient.Abstraction;
-using Blueprints.RabbitClient.Configuration;
+using EventBus.Abstraction;
+using EventBus.Configuration;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 
-namespace Blueprints.RabbitClient;
+namespace EventBus;
 
 internal class EventBusHostedService : IHostedService
 {

@@ -1,7 +1,6 @@
-using System;
-using Blueprints.RabbitClient.ErrorHandling;
+using EventBus.ErrorHandling;
 
-namespace Blueprints.RabbitClient.Implementation;
+namespace EventBus.Implementation;
 
 public class EmptyFatalExceptionChecker : IFatalExceptionChecker
 {

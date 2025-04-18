@@ -1,9 +1,6 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Blueprints.RabbitClient.Abstraction;
+using EventBus.Abstraction;
 
-namespace Blueprints.RabbitClient.Configuration;
+namespace EventBus.Configuration;
 
 public sealed class EventBusConsumerCollection
 {

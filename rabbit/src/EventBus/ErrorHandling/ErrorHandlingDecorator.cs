@@ -1,9 +1,7 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Blueprints.RabbitClient.Abstraction;
+using System.Diagnostics.CodeAnalysis;
+using EventBus.Abstraction;
 
-namespace Blueprints.RabbitClient.ErrorHandling;
+namespace EventBus.ErrorHandling;
 
 public class ErrorHandlingDecorator<TEvent> : IEventHandler<TEvent>
 {
@@ -16,7 +14,7 @@ public class ErrorHandlingDecorator<TEvent> : IEventHandler<TEvent>
         _checker = checker;
     }
     
-    public Task Handle(TEvent @event, CancellationToken cancellationToken = default)
+    public Task Handle([NotNull] TEvent @event, CancellationToken cancellationToken = default)
     {
         try
         {

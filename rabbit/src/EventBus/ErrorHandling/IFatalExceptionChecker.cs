@@ -1,6 +1,4 @@
-using System;
-
-namespace Blueprints.RabbitClient.ErrorHandling;
+namespace EventBus.ErrorHandling;
 
 public interface IFatalExceptionChecker
 {

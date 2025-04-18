@@ -1,6 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
-using Blueprints.RabbitClient.Abstraction;
+using EventBus.Abstraction;
 using Serilog;
 
 namespace Service1.EventHandlers;

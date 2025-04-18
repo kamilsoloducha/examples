@@ -1,14 +1,11 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Blueprints.RabbitClient.Abstraction;
-using Blueprints.RabbitClient.Configuration;
-using Blueprints.RabbitClient.ErrorHandling;
-using Blueprints.RabbitClient.Implementation;
+using EventBus.Abstraction;
+using EventBus.Configuration;
+using EventBus.ErrorHandling;
+using EventBus.Implementation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Blueprints.RabbitClient;
+namespace EventBus;
 
 public static class Extensions
 {

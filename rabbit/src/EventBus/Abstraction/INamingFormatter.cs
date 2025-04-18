@@ -1,4 +1,4 @@
-namespace Blueprints.RabbitClient.Abstraction;
+namespace EventBus.Abstraction;
 
 public interface INamingFormatter
 {
