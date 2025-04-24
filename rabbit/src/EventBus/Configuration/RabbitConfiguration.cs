@@ -7,4 +7,5 @@ public record RabbitConfiguration
     public required  string UserName { get; init; }
     public required  string Password { get; init; }
     public required  string QueuePrefix { get; init; }
+    public required  TimeSpan MaxDelay { get; init; }
 }

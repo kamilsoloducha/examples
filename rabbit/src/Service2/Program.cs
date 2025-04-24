@@ -1,7 +1,7 @@
 using Blueprints.Events;
-using Blueprints.RabbitClient;
 using Blueprints.RabbitMassTransit;
 using Blueprints.Serilog;
+using EventBus;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Servic2.Services;

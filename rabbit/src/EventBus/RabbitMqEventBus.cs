@@ -20,6 +20,7 @@ public class RabbitMqEventBus : IEventBus
     private readonly TimeProvider _timeProvider;
     private readonly ConnectionFactory _connectionFactory;
     private readonly CancellationTokenSource _applicationStoppingTokenSource;
+    private readonly RabbitConfiguration _rabbitConfiguration;
     private IConnection? _connection;
 
     public RabbitMqEventBus(IOptions<RabbitConfiguration> options,
@@ -38,6 +39,7 @@ public class RabbitMqEventBus : IEventBus
             UserName = options.Value.UserName
         };
         _applicationStoppingTokenSource = new CancellationTokenSource();
+        _rabbitConfiguration = options.Value;
     }
 
     #region Connector
@@ -72,7 +74,9 @@ public class RabbitMqEventBus : IEventBus
 
         await channel.ExchangeDeclareAsync(
             exchangeName,
-            ExchangeType.Direct,
+            ExchangeType.Fanout,
+            true,
+            false,
             cancellationToken: cancellationToken);
 
         await channel.QueueDeclareAsync(
@@ -95,7 +99,7 @@ public class RabbitMqEventBus : IEventBus
         consumer.ReceivedAsync += async (_, eventArgs) =>
         {
             if (_applicationStoppingTokenSource.IsCancellationRequested) return;
-            
+
             TEvent? @event;
             var body = Array.Empty<byte>();
 
@@ -104,14 +108,14 @@ public class RabbitMqEventBus : IEventBus
                 var traceIdValue = string.Empty;
                 var props = eventArgs.BasicProperties;
                 if (props.Headers is not null &&
-                    props.Headers.TryGetValue(BasicPropertiesExtensions.TraceIdHeaderName, out var traceIdValueObject))
+                    props.Headers.TryGetValue(BasicPropertiesExtensions.TraceIdHeaderKey, out var traceIdValueObject))
                 {
                     if (traceIdValueObject is byte[])
                     {
                         traceIdValue = Encoding.UTF8.GetString((byte[])traceIdValueObject);
                     }
                 }
-                
+
                 Activity.Current = new Activity(nameof(IEventBusSubscriber.Subscribe))
                     .SetParentId(
                         ActivityTraceId.CreateFromString(traceIdValue),
@@ -129,7 +133,12 @@ public class RabbitMqEventBus : IEventBus
             }
             catch (Exception ex)
             {
-                await MoveToErrorQueue<TEvent>(body, channel, eventArgs, new FatalException(ex), _applicationStoppingTokenSource.Token);
+                Log.Fatal(ex, ex.Message);
+                await MoveToErrorQueue<TEvent>(
+                    body,
+                    channel,
+                    eventArgs,
+                    _applicationStoppingTokenSource.Token);
                 return;
             }
 
@@ -137,17 +146,27 @@ public class RabbitMqEventBus : IEventBus
             try
             {
                 var eventHandler = scope.ServiceProvider.GetRequiredService<IEventHandler<TEvent>>();
-                await eventHandler.Handle(@event,  _applicationStoppingTokenSource.Token);
+                await eventHandler.Handle(@event, _applicationStoppingTokenSource.Token);
                 await channel.BasicAckAsync(eventArgs.DeliveryTag, false);
             }
             catch (FatalException ex)
             {
-                await MoveToErrorQueue<TEvent>(body, channel, eventArgs, ex,  _applicationStoppingTokenSource.Token);
+                Log.Fatal(ex, "Error while processing message");
+
+                await MoveToErrorQueue<TEvent>(
+                    body,
+                    channel,
+                    eventArgs,
+                    _applicationStoppingTokenSource.Token);
             }
             catch (Exception ex)
             {
                 Log.Error(ex, ex.Message);
-                await channel.BasicNackAsync(eventArgs.DeliveryTag, false, true);
+
+                await DelayEvent<TEvent>(body,
+                    channel,
+                    eventArgs,
+                    _applicationStoppingTokenSource.Token);
             }
             finally
             {
@@ -155,16 +174,20 @@ public class RabbitMqEventBus : IEventBus
             }
         };
 
-        await channel.BasicConsumeAsync(queueName, false, consumer, cancellationToken:  _applicationStoppingTokenSource.Token);
+        await channel.BasicConsumeAsync(
+            queueName,
+            autoAck: false,
+            consumer,
+            cancellationToken: _applicationStoppingTokenSource.Token);
 
         Log.Information("Subscription created - {Exchange} - {Queue}", exchangeName, queueName);
     }
 
     private async Task MoveToErrorQueue<TEvent>(byte[] body, IChannel channel, BasicDeliverEventArgs ea,
-        FatalException ex, CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default)
     {
-        Log.Fatal(ex, "Error while processing message");
-
+        Log.Error("Moving {Event} to error queue", typeof(TEvent).Name);
+        
         var errorQueueName = GetErrorQueueName<TEvent>();
 
         await channel.QueueDeclareAsync(
@@ -183,7 +206,68 @@ public class RabbitMqEventBus : IEventBus
             body,
             cancellationToken);
 
-        await channel.BasicAckAsync(ea.DeliveryTag, multiple: false);
+        await channel.BasicAckAsync(
+            ea.DeliveryTag,
+            multiple: false,
+            cancellationToken);
+    }
+
+    private async Task DelayEvent<TEvent>(byte[] body, IChannel channel, BasicDeliverEventArgs eventArgs,
+        CancellationToken cancellationToken = default)
+    {
+        TimeSpan delay;
+        if (eventArgs.BasicProperties.Headers is not null
+            && eventArgs.BasicProperties.Headers.TryGetValue("x-delay", out var delayObject)
+            && delayObject is long delayMs)
+        {
+            delay = delayMs < 0 ? TimeSpan.FromMilliseconds(delayMs) : TimeSpan.FromMilliseconds(-10);
+        }
+        else
+        {
+            delay = TimeSpan.FromMilliseconds(-10);
+        }
+        
+        delay *= 2;
+
+        if (delay < _rabbitConfiguration.MaxDelay)
+        {
+            await MoveToErrorQueue<TEvent>(body, channel, eventArgs, cancellationToken);
+            return;
+        }
+
+        var props = new BasicProperties()
+        {
+            Headers = new Dictionary<string, object?>(),
+            Persistent = true
+        };
+        props.AddDateTimeOffset(_timeProvider.GetLocalNow().UtcDateTime);
+        props.AddDelay(delay);
+        props.AddTraceId(GetTraceId());
+
+        await channel.BasicAckAsync(
+            eventArgs.DeliveryTag,
+            multiple: false);
+        
+        Log.Information("Delaying event for {Delay} ms", delay.TotalMilliseconds);
+        
+        var queueName = GetQueueName<TEvent>();
+        var delayExchangeName = "DelayExchange";
+        
+        await channel.ExchangeDeclareAsync(
+            exchange: delayExchangeName,
+            type: "x-delayed-message",
+            durable: true,
+            autoDelete: false,
+            arguments: new Dictionary<string, object?> { { "x-delayed-type", ExchangeType.Direct } },
+            cancellationToken: cancellationToken);
+        await channel.QueueBindAsync(queueName, delayExchangeName, queueName);
+
+        await channel.BasicPublishAsync(
+            "DelayExchange",
+            GetQueueName<TEvent>(),
+            false,
+            props,
+            body);
     }
 
     #endregion
@@ -202,27 +286,29 @@ public class RabbitMqEventBus : IEventBus
             Headers = new Dictionary<string, object?>()
         };
         props.AddDateTimeOffset(_timeProvider.GetLocalNow().UtcDateTime);
-
-        var traceId = Activity.Current is not null
-            ? Activity.Current.TraceId.ToHexString()
-            : new Activity(nameof(RabbitMqEventBus)).TraceId.ToHexString();
-
-        props.AddTraceId(traceId);
+        props.AddTraceId(GetTraceId());
 
         var channel = await CreateChannel(_connection, cancellationToken);
-        await channel.BasicPublishAsync(exchangeName, string.Empty, false, props, messageBodyBytes);
+        await channel.ExchangeDeclareAsync(exchangeName, ExchangeType.Fanout, true, false,
+            cancellationToken: cancellationToken);
+        await channel.BasicPublishAsync(exchangeName, string.Empty, false, props, messageBodyBytes, cancellationToken);
     }
 
     #endregion
 
+
     private string GetQueueName<TEvent>() => _namingFormatter.QueueName(typeof(TEvent).Name);
     private string GetExchangeName<TEvent>() => _namingFormatter.ExchangeName(typeof(TEvent).Name);
     private string GetErrorQueueName<TEvent>() => _namingFormatter.ErrorQueueName(typeof(TEvent).Name);
-    
+
+    private static string GetTraceId() => Activity.Current is not null
+        ? Activity.Current.TraceId.ToHexString()
+        : new Activity(nameof(RabbitMqEventBus)).TraceId.ToHexString();
+
     private static Task<IChannel> CreateChannel(IConnection? connection, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(connection);
-        
+
         return connection.CreateChannelAsync(
             new CreateChannelOptions(
                 publisherConfirmationsEnabled: true,
